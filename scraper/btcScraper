@@ -1,0 +1,69 @@
+import re
+
+from requests import get
+from requests.exceptions import RequestException
+from contextlib import closing
+from bs4 import BeautifulSoup
+
+def simple_get(url):
+    """
+    Attempts to get the content at `url` by making an HTTP GET request.
+    If the content-type of response is some kind of HTML/XML, return the
+    text content, otherwise return None.
+    """
+    try:
+        with closing(get(url, stream=True)) as resp:
+            if is_good_response(resp):
+                return resp.content
+            else:
+                return None
+
+    except RequestException as e:
+        log_error('Error during requests to {0} : {1}'.format(url, str(e)))
+        return None
+
+
+def is_good_response(resp):
+    """
+    Returns True if the response seems to be HTML, False otherwise.
+    """
+    content_type = resp.headers['Content-Type'].lower()
+    return (resp.status_code == 200
+            and content_type is not None
+            and content_type.find('html') > -1)
+
+
+def log_error(e):
+    """
+    It is always a good idea to log errors.
+    This function just prints them, but you can
+    make it do anything.
+    """
+    print(e)
+
+def get_btc_addresses(url, depth):
+    """
+    Downloads the page where the list of mathematicians is found
+    and returns a list of strings, one per mathematician
+    """
+    if depth > 2:
+        return
+    response = simple_get(url)
+    print('hello')
+
+    if response is not None:
+        # print('foobar1')
+        # html = BeautifulSoup(response, 'html.parser')
+        # print('foobar2')
+        # for el in html.select('body'):
+        #     print('foobar3')
+        #     print(str(el))
+            match = re.findall(r'[13][a-km-zA-HJ-NP-Z0-9]{26,33}', response)
+            print(match)
+    get_btc_addresses(newUrl, depth + 1)
+
+print('start!')
+# url = 'https://www.blockchain.com/btc/address/3N3xWVi6qe6Qy5n6hfC7Bgpgizkd7eh`wiz'
+url = 'https://99bitcoins.com/bitcoin-rich-list-top1000/'
+get_btc_addresses(url)
+print('done!')
