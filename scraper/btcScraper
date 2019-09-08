@@ -41,13 +41,11 @@ def log_error(e):
     """
     print(e)
 
-def get_btc_addresses(url, depth):
+def get_btc_addresses(url):
     """
     Downloads the page where the list of mathematicians is found
     and returns a list of strings, one per mathematician
     """
-    if depth > 2:
-        return
     response = simple_get(url)
     print('hello')
 
@@ -60,7 +58,6 @@ def get_btc_addresses(url, depth):
         #     print(str(el))
             match = re.findall(r'[13][a-km-zA-HJ-NP-Z0-9]{26,33}', response)
             print(match)
-    get_btc_addresses(newUrl, depth + 1)
 
 print('start!')
 # url = 'https://www.blockchain.com/btc/address/3N3xWVi6qe6Qy5n6hfC7Bgpgizkd7eh`wiz'
